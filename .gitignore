@@ -1,0 +1,36 @@
+# EventSystem Ignored file types
+*.gch
+*.o
+*.a
+*.exe
+*.out
+.DS_Store
+*.[Dd][Ss]_[Ss]tore
+lib/
+bin/
+*.dylib
+
+# Cmake exclude files
+CMakeCache.txt
+CMakeSettings.json
+[Mm]akefile
+CMakeFiles/
+cmake_install.cmake
+
+# Build results
+x86-[Dd]ebug/
+x64-[Dd]ebug/
+[Dd]ebug/
+[Dd]ebug-*/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+
+# Visual Studio 2015 cache/options directory
+.vs/
