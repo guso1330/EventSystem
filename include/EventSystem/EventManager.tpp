@@ -29,7 +29,8 @@ namespace EventSystem {
 			n_eventHandlerListPtr->push_back(p_eventHandler);
 			m_eventHandlerStore.insert(std::make_pair(eventName, (*n_eventHandlerListPtr)));
 		} else {
-			handlerIt->second.push_back(p_eventHandler);
+			n_eventHandlerListPtr = &(handlerIt->second);
+			n_eventHandlerListPtr->push_back(p_eventHandler);
 		}
 
 		return p_eventHandler->id;
@@ -50,8 +51,6 @@ namespace EventSystem {
 				CallbackType* c = dynamic_cast<CallbackType*>((*callbackVectorIt)->callback);
 				if(c) {
 					(*c)(std::forward<Args>(args)...);
-				} else {
-					// TODO: Create some sort of notification
 				}
 			}
 		}

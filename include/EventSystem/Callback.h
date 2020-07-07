@@ -23,7 +23,7 @@ namespace EventSystem {
 			F* Get() { return &m_func; }
 
 			/* Overloaded Operators */
-			inline void operator() (Args&&... args) { if(m_func) m_func(std::forward<Args>(args)...); }
+			inline void operator() (Args... args) { if(m_func) m_func(args...); }
 
 		private:
 			F m_func;
