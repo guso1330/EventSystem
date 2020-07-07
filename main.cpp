@@ -126,5 +126,5 @@ int main(int argc, char const *argv[])
 	EventSystem::EventManager::GetInstance().DispatchEvent("Event");
 	EventSystem::EventManager::GetInstance().DispatchEvent("LogEvent");
 
-	return 0;  
+	return 0;
 }
