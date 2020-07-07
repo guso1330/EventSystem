@@ -7,26 +7,33 @@
 namespace EventSystem {
 	class EventManager {
 		public:
+			/* Constructors / Destructors */
 			EventManager(const EventManager&) = delete;
 			~EventManager() = default;
 
-			/* Public Methods */
+			/* Templated Public Methods */
 			template<class E>
-			E& CreateEvent(const std::string& type);
+			E& CreateEvent();
 			template<class... Args, class F>
-			EventHandlerId AddEventListener(const std::string& type, F&& f);
-			void RemoveEventListener(const std::string& type, EventHandlerId id);
+			EventHandlerId AddEventListener(const std::string& eventName, F&& func);
+			template<class... Args>
+			void DispatchEvent(const std::string& eventName, Args&&... args);
+
+			/* Public Methods */
+			void RemoveEventListener(const std::string& eventName, const EventHandlerId id);
 
 			/* Getters */
+			inline const EventHandlerStore& GetEventHandlerStore() const { return m_eventHandlerStore; }
 			static EventManager& GetInstance();
 
 			/* Operator Overload */
 			void operator=(EventManager const&) = delete;
+
 		private:
 			EventManager() = default;
+
 		private:
 			unsigned int m_handlerId = 0;
-			EventStore m_eventStore;
 			EventHandlerStore m_eventHandlerStore;
 	};
 }

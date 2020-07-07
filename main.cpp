@@ -6,35 +6,96 @@ struct LogEvent : public EventSystem::Event {
 	std::string message;
 };
 
-void testVoidFn () {
-	std::cout << "testVoidFn()" << std::endl;
+void testFn1() {
+	std::cout << "testFn1()" << std::endl;
 }
 
-void testFn(const LogEvent& event) {
-	std::cout << "testFn(const LogEvent& event) - event.message: " << event.message << std::endl;
+void testFn2(int x, int y) {
+	std::cout << "testFn2(): " << x + y << std::endl;
+}
+
+void testFn3(int& total, int x, int y) {
+	total += x + y;
+	std::cout << "testFn3(): " << total << std::endl;
 }
 
 int main(int argc, char const *argv[])
 {
+	/*
+		Testing Callback Functions
+	*/
+	EventSystem::Callback<> test1Callback;
+	EventSystem::Callback<int, int> test2Callback;
+	EventSystem::Callback<int&, int, int> test3Callback;
+	EventSystem::Callback<int&, int, int>* test3PtrCallback;
+
+	int total = 0;
+
+	test1Callback = EventSystem::Callback<>(testFn1);
+	test2Callback = EventSystem::Callback<int, int>(testFn2);
+	test3Callback = EventSystem::Callback<int&, int, int>(testFn3);
+	test3PtrCallback = new EventSystem::Callback<int&, int, int>(testFn3);
+
+	std::cout << "BEGIN - EventSystem::Callback" << std::endl;
+		test1Callback();
+		test2Callback(1, 1);
+		test3Callback(total, 1, 1);
+		(*test3PtrCallback)(total, 1, 1);
+		std::cout << "total = " << total << " after Callbacks called" << std::endl;
+	std::cout << "END - EventSystem::Callback" << std::endl << std::endl;
+
+	/*
+		Testing Event Creation
+	*/
+	EventSystem::Event event1;
 	LogEvent logEvent1;
 	LogEvent logEvent2;
 	LogEvent logEvent3;
 
-	// LogEvent1
-	logEvent1 = EventSystem::EventManager::GetInstance().CreateEvent<LogEvent>("LogEvent");
+	event1 = EventSystem::EventManager::GetInstance().CreateEvent<EventSystem::Event>();
+
+	logEvent1 = EventSystem::EventManager::GetInstance().CreateEvent<LogEvent>();
 	logEvent1.message = "logEvent1";
 
-	// LogEvent2
-	logEvent2 = EventSystem::EventManager::GetInstance().CreateEvent<LogEvent>("LogEvent");
+	logEvent2 = EventSystem::EventManager::GetInstance().CreateEvent<LogEvent>();
 	logEvent2.message = "logEvent2";
 
-	// LogEvent3
-	logEvent3 = EventSystem::EventManager::GetInstance().CreateEvent<LogEvent>("LogEvent3");
+	logEvent3 = EventSystem::EventManager::GetInstance().CreateEvent<LogEvent>();
 	logEvent3.message = "logEvent3";
 
-	EventSystem::EventManager::GetInstance().AddEventListener("LogEvent", testVoidFn);
-	EventSystem::EventManager::GetInstance().AddEventListener<const LogEvent&>("LogEvent", testFn);
-	EventSystem::EventManager::GetInstance().AddEventListener<const LogEvent&>("LogEvent3", testFn);
+	std::cout << "BEGIN - CreateEvent Test" << std::endl;
+		std::cout << "event1 type: " << event1.GetType() << std::endl;
+		std::cout << "logEvent1 type: " << logEvent1.GetType() << std::endl;
+		std::cout << "logEvent2 type: " << logEvent2.GetType() << std::endl;
+		std::cout << "logEvent3 type: " << logEvent3.GetType() << std::endl;
+	std::cout << "END - CreateEvent Test" << std::endl << std::endl;
 
-	return 0;
+	/*
+		Testing AddEventListener
+	*/
+	int id1, id2, id3, id4;
+	std::cout << "BEGIN - AddEventListener Test" << std::endl;
+		id1 = EventSystem::EventManager::GetInstance().AddEventListener<>("Event", []() { std::cout << "Event anonymous function" << std::endl; });
+		id2 = EventSystem::EventManager::GetInstance().AddEventListener<>("LogEvent", testFn1);
+		id3 = EventSystem::EventManager::GetInstance().AddEventListener<int, int>("LogEvent", testFn2);
+		id4 = EventSystem::EventManager::GetInstance().AddEventListener<int&, int, int>("LogEvent", testFn3);
+	std::cout << "id1: " << id1 << std::endl;
+	std::cout << "id2: " << id2 << std::endl;
+	std::cout << "id3: " << id3 << std::endl;
+	std::cout << "id4: " << id4 << std::endl;
+	std::cout << "END - AddEventListener Test" << std::endl << std::endl;
+
+	/*
+		Testing DispatchEvent
+	*/
+	std::cout << "BEGIN - DispatchEvent Test" << std::endl;
+		total = 0;
+		EventSystem::EventManager::GetInstance().DispatchEvent("Event");
+		EventSystem::EventManager::GetInstance().DispatchEvent("LogEvent");
+		EventSystem::EventManager::GetInstance().DispatchEvent("LogEvent", 1, 1);
+		EventSystem::EventManager::GetInstance().DispatchEvent("LogEvent", total, 1, 1);
+		std::cout << "total = " << total << " after LogEvent dispatched" << std::endl;
+	std::cout << "END - DispatchEvent Test" << std::endl << std::endl;
+
+	return 0;  
 }

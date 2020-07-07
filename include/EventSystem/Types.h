@@ -1,47 +1,38 @@
 #pragma once
 
+#include "EventSystem/Callback.h"
+
 #include <string>
-#include <functional>
 #include <vector>
 #include <unordered_map>
 
 namespace EventSystem {
-	template <class... Args>
-	using CallbackFn = std::function<void(Args...)>;
+	struct Event;
+	struct EventHandler;
+
+	typedef size_t Type;
 	typedef unsigned int EventHandlerId;
+	typedef std::vector<EventHandler*> EventHandlerList;
+	typedef std::unordered_map<std::string, EventHandlerList> EventHandlerStore;
 
-	class BaseCallback {
+	namespace EventType {
+		template<class T>
+		static inline Type GetType() { return typeid(T).hash_code(); }
+	}
+
+	class Event {
 		public:
-			virtual ~BaseCallback() {}
-	};
+			Event() = default;
+			Event(Type type) : m_type(type) {}
 
-	template<class... Args>
-	class Callback : public BaseCallback {
-		typedef CallbackFn<Args...> F;
+			inline const Type GetType() const { return m_type; }
 
-		public:
-			Callback() {}
-			Callback(F f) { m_func = f; }
-			~Callback() {}
-
-			/* Overloaded Operators */
-			inline void operator()(Args... args) { if(m_func) m_func(args...); }
 		private:
-			F m_func;
-	};
-
-	struct Event {
-		Event() = default;
-		Event(const std::string& t) : type(t) {}
-		std::string type;
+			Type m_type;
 	};
 
 	struct EventHandler {
 		EventHandlerId id;
-		Event* event;
 		BaseCallback* callback;
 	};
-
-	typedef std::unordered_map<std::string, Event*> EventStore;
-	typedef std::unordered_map<std::string, std::vector<EventHandler*> > EventHandlerStore;
 }
