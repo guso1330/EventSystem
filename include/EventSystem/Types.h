@@ -13,7 +13,7 @@ namespace EventSystem {
 	typedef size_t Type;
 	typedef unsigned int EventHandlerId;
 	typedef std::vector<EventHandler*> EventHandlerList;
-	typedef std::unordered_map<std::string, EventHandlerList> EventHandlerStore;
+	typedef std::unordered_map<std::string, EventHandlerList*> EventHandlerStore;
 
 	namespace EventType {
 		template<class T>

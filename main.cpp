@@ -108,7 +108,6 @@ int main(int argc, char const *argv[])
 		Testing DispatchEvent
 	*/
 	std::cout << "BEGIN - DispatchEvent Test" << std::endl;
-		int a, b;
 		total = 0;
 		EventSystem::EventManager::GetInstance().DispatchEvent("Event");
 		EventSystem::EventManager::GetInstance().DispatchEvent("LogEvent");
@@ -118,6 +117,14 @@ int main(int argc, char const *argv[])
 		EventSystem::EventManager::GetInstance().DispatchEvent("LogEvent", (const int&)total);
 		std::cout << "total = " << total << " after LogEvent dispatched" << std::endl;
 	std::cout << "END - DispatchEvent Test" << std::endl << std::endl;
+
+	/*
+		Testing RemoveEventListener
+	*/
+	EventSystem::EventManager::GetInstance().RemoveEventListener("Event", id1);
+	EventSystem::EventManager::GetInstance().RemoveEventListener("LogEvent", id2);
+	EventSystem::EventManager::GetInstance().DispatchEvent("Event");
+	EventSystem::EventManager::GetInstance().DispatchEvent("LogEvent");
 
 	return 0;  
 }

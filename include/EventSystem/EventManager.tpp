@@ -27,9 +27,9 @@ namespace EventSystem {
 		if (handlerIt == m_eventHandlerStore.end()) {
 			n_eventHandlerListPtr = new EventHandlerList();
 			n_eventHandlerListPtr->push_back(p_eventHandler);
-			m_eventHandlerStore.insert(std::make_pair(eventName, (*n_eventHandlerListPtr)));
+			m_eventHandlerStore.insert(std::make_pair(eventName, n_eventHandlerListPtr));
 		} else {
-			n_eventHandlerListPtr = &(handlerIt->second);
+			n_eventHandlerListPtr = handlerIt->second;
 			n_eventHandlerListPtr->push_back(p_eventHandler);
 		}
 
@@ -40,14 +40,14 @@ namespace EventSystem {
 	void EventManager::DispatchEvent(const std::string& eventName, Args&&... args) {
 		typedef Callback<Args...> CallbackType;
 
-		EventHandlerList callbackVector;
+		EventHandlerList* callbackVector;
 		EventHandlerList::const_iterator callbackVectorIt;
 		EventHandlerStore::const_iterator storeIt;
 
 		storeIt = m_eventHandlerStore.find(eventName);
 		if (storeIt != m_eventHandlerStore.end()) {
 			callbackVector = storeIt->second;
-			for (callbackVectorIt = callbackVector.begin(); callbackVectorIt != callbackVector.end(); ++callbackVectorIt) {
+			for (callbackVectorIt = callbackVector->begin(); callbackVectorIt != callbackVector->end(); ++callbackVectorIt) {
 				CallbackType* c = dynamic_cast<CallbackType*>((*callbackVectorIt)->callback);
 				if(c) {
 					(*c)(std::forward<Args>(args)...);
