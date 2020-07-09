@@ -39,6 +39,7 @@ int main(int argc, char const *argv[])
 	EventSystem::Callback<int&, int, int>* test3PtrCallback;
 	EventSystem::Callback<int, int, int> test4Callback;
 	EventSystem::Callback<const int&> test5Callback;
+	EventSystem::Callback<int> test6Callback;
 
 	int total = 0;
 
@@ -48,6 +49,9 @@ int main(int argc, char const *argv[])
 	test3PtrCallback = new EventSystem::Callback<int&, int, int>(testFn3);
 	test4Callback = EventSystem::Callback<int, int, int>(testFn4);
 	test5Callback = EventSystem::Callback<const int&>(testFn5);
+	test6Callback = EventSystem::Callback<int>([](int x) {
+		std::cout << "testFn6(): x = " << x << std::endl;
+	});
 
 	std::cout << "BEGIN - EventSystem::Callback" << std::endl;
 		test1Callback();
@@ -56,6 +60,7 @@ int main(int argc, char const *argv[])
 		(*test3PtrCallback)(total, 1, 1);
 		test4Callback(total, 1, 1);
 		test5Callback(total);
+		test6Callback(10);
 		std::cout << "total = " << total << " after Callbacks called" << std::endl;
 	std::cout << "END - EventSystem::Callback" << std::endl << std::endl;
 
@@ -90,7 +95,7 @@ int main(int argc, char const *argv[])
 	*/
 	int id1, id2, id3, id4, id5, id6;
 	std::cout << "BEGIN - AddEventListener Test" << std::endl;
-		id1 = EventSystem::EventManager::GetInstance().AddEventListener<>("Event", []() { std::cout << "Event anonymous function" << std::endl; });
+		id1 = EventSystem::EventManager::GetInstance().AddEventListener<>("Event", [id1]() { std::cout << "Event: anonymous function with id " << id1 << std::endl; });
 		id2 = EventSystem::EventManager::GetInstance().AddEventListener<>("LogEvent", testFn1);
 		id3 = EventSystem::EventManager::GetInstance().AddEventListener<int, int>("LogEvent", testFn2);
 		id4 = EventSystem::EventManager::GetInstance().AddEventListener<int&, int, int>("LogEvent", testFn3);

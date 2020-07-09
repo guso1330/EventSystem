@@ -4,7 +4,7 @@
 
 namespace EventSystem {
 	template <class... Args>
-	using CallbackFn = void(*)(Args...);
+	using CallbackFn = std::function<void(Args...)>;
 
 	class BaseCallback {
 		public:
